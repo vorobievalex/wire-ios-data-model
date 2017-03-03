@@ -38,7 +38,7 @@ open class ToDoItem: ZMManagedObject {
         }
     }
     
-    static func addToDo(for message: ZMConversationMessage?,
+    public static func addToDo(for message: ZMConversationMessage?,
                         atDate date: Date?,
                         withDescription text: String?,
                         inUserSession contextProvider: ZMManagedObjectContextProvider) -> ToDoItem?
@@ -49,7 +49,7 @@ open class ToDoItem: ZMManagedObject {
         return self.addToDo(for: msg, atDate: date, withDescription: text, inContext: contextProvider.managedObjectContext)
     }
     
-    static func addToDo(for message: ZMMessage?,
+    private static func addToDo(for message: ZMMessage?,
                         atDate date: Date?,
                         withDescription text: String?,
                         inContext context: NSManagedObjectContext) -> ToDoItem?
@@ -63,11 +63,11 @@ open class ToDoItem: ZMManagedObject {
         return item
     }
     
-    func markAsDone(){
+    public func markAsDone(){
         self.isDone = true
     }
     
-    static func allItems(inUserSession userSession: ZMManagedObjectContextProvider) -> [ToDoItem] {
+    public static func allItems(inUserSession userSession: ZMManagedObjectContextProvider) -> [ToDoItem] {
         guard let uiMOC = userSession.managedObjectContext else { return [] }
         let fetchRequest = NSFetchRequest<ToDoItem>(entityName: self.entityName())
         let items = uiMOC.fetchOrAssert(request: fetchRequest)
