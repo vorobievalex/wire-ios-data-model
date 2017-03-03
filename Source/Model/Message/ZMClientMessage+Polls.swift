@@ -20,14 +20,14 @@ import Foundation
 
 extension ZMGenericMessageData {
     var pollVote: ZMPollVote? {
-        guard let genericMessage = message.genericMessage, genericMessage.hasPoll() else { return nil }
+        guard let genericMessage = self.genericMessage, genericMessage.hasPoll() else { return nil }
         guard let pollEntry = genericMessage.poll else { return nil }
         guard let vote = pollEntry.vote, pollEntry.hasVote() else { return nil }
         return vote
     }
     
     var pollContent: ZMPollContent? {
-        guard let genericMessage = message.genericMessage, genericMessage.hasPoll() else { return nil }
+        guard let genericMessage = self.genericMessage, genericMessage.hasPoll() else { return nil }
         guard let pollEntry = genericMessage.poll else { return nil }
         guard let pollContent = pollEntry.content, pollEntry.hasContent() else { return nil }
         return pollContent
@@ -35,9 +35,7 @@ extension ZMGenericMessageData {
 }
 
 extension ZMPollMessageData {
-
-    
-    convenience init?(messageData: [ZMGenericMessageData]) {
+    convenience init?(messageData: [ZMGenericMessageData], message: ZMClientMessage) {
         var content: ZMPollContent? = nil
         var castedVotes = [Int : Set<ZMUser>]()
         for message in messageData {
@@ -57,13 +55,24 @@ extension ZMPollMessageData {
             return entries[voteIdx]
         }
         
-        self.init(entries: entries, votes: votes)
+        self.init(entries: entries, votes: votes, message: message)
     }
 }
 
 extension ZMClientMessage {
     override public var pollMessageData: ZMPollMessageData? {
         guard let genericMessages = dataSet.array as? [ZMGenericMessageData] else { return nil }
-        return ZMPollMessageData(messageData: genericMessages)
+        return ZMPollMessageData(messageData: genericMessages, message: self)
+    }
+    
+    public var currentVoteMessageData: ZMGenericMessageData? {
+        guard let genericMessages = dataSet.array as? [ZMGenericMessageData] else { return nil }
+        let selfUser = ZMUser.selfUser(in: managedObjectContext!)
+        for message in genericMessages {
+            if let _ = message.pollVote, message.sender == selfUser {
+                return message
+            }
+        }
+        return nil
     }
 }

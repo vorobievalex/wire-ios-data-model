@@ -21,17 +21,36 @@ import ZMProtos
 
 @objc public final class ZMPollMessageData: NSObject {
     public let entries: [String]
+    public weak var message: ZMClientMessage?
     public fileprivate(set) var votes: [String : Set<ZMUser>]
     
-    public init(entries: [String], votes: [String : Set<ZMUser>] = [String : Set<ZMUser>]()) {
+    public init(entries: [String], votes: [String : Set<ZMUser>] = [String : Set<ZMUser>](), message: ZMClientMessage) {
         self.entries = entries
         self.votes = votes
+        self.message = message
     }
     
     public func castVote(index: Int) {
+        guard let message = message else { return }
+        guard let vote = ZMPollVote.builder().setVotedOption(Int32(index)) else { return }
+        vote.setSequence(0)
+        vote.setTieBreaker(0)
+        guard let poll = ZMPoll.builder().setVote(vote) else { return }
+        guard let genericMessage = ZMGenericMessage.builder().setPoll(poll).setMessageId(message.nonce.transportString()).build() else { return }
         
+        if let previousVote = message.currentVoteMessageData {
+            message.managedObjectContext?.delete(previousVote)
+        }
+        let dataSet = message.mutableOrderedSetValue(forKey: "dataSet") as! NSMutableOrderedSet
+        let messageData = ZMGenericMessageData.insertNewObject(in: message.managedObjectContext!)
+        messageData.data = genericMessage.data()
+        messageData.message = message
+        messageData.sender = ZMUser.selfUser(in: message.managedObjectContext!)
+            
+        dataSet.add(messageData)
+        message.dataSet = dataSet
+        message.delivered = false
     }
-    
 }
 
 extension ZMConversation {
