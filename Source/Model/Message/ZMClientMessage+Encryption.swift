@@ -65,7 +65,28 @@ public protocol EncryptedPayloadGenerator {
 extension ZMClientMessage: EncryptedPayloadGenerator {
 
     public func encryptedMessagePayloadData() -> (data: Data, strategy: MissingClientsStrategy)? {
-        guard let genericMessage = self.genericMessage, let conversation = self.conversation else {
+        guard let conversation = self.conversation else { return nil }
+
+        if let genericMessages = dataSet.array as? [ZMGenericMessageData] {
+            let selfUser = ZMUser.selfUser(in: managedObjectContext!)
+            let withVotesByMe: [ZMGenericMessageData] = genericMessages.flatMap {
+                if let _ = $0.pollVote, $0.sender == selfUser {
+                    return $0
+                } else {
+                    return nil
+                }
+            }
+            if !withVotesByMe.isEmpty {
+                return withVotesByMe.first?.genericMessage.encryptedMessagePayloadData(conversation, externalData: nil)
+            } else {
+                let withPollContent = genericMessages.filter  { $0.pollContent != nil }
+                if !withPollContent.isEmpty {
+                    return withPollContent.first?.genericMessage.encryptedMessagePayloadData(conversation, externalData: nil)
+                }
+            }
+        }
+        
+        guard let genericMessage = self.genericMessage else {
             return nil
         }
         return genericMessage.encryptedMessagePayloadData(conversation, externalData: nil)

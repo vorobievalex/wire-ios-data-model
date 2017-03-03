@@ -18,16 +18,32 @@
 
 import Foundation
 
+extension ZMGenericMessageData {
+    var pollVote: ZMPollVote? {
+        guard let genericMessage = message.genericMessage, genericMessage.hasPoll() else { return nil }
+        guard let pollEntry = genericMessage.poll else { return nil }
+        guard let vote = pollEntry.vote, pollEntry.hasVote() else { return nil }
+        return vote
+    }
+    
+    var pollContent: ZMPollContent? {
+        guard let genericMessage = message.genericMessage, genericMessage.hasPoll() else { return nil }
+        guard let pollEntry = genericMessage.poll else { return nil }
+        guard let pollContent = pollEntry.content, pollEntry.hasContent() else { return nil }
+        return pollContent
+    }
+}
+
 extension ZMPollMessageData {
+
+    
     convenience init?(messageData: [ZMGenericMessageData]) {
         var content: ZMPollContent? = nil
         var castedVotes = [Int : Set<ZMUser>]()
         for message in messageData {
-            guard let genericMessage = message.genericMessage, genericMessage.hasPoll() else { continue }
-            guard let pollEntry = genericMessage.poll else { continue }
-            if let pollContent = pollEntry.content, pollEntry.hasContent() {
+            if let pollContent = message.pollContent {
                 content = pollContent
-            } else if let vote = pollEntry.vote, pollEntry.hasVote() {
+            } else if let vote = message.pollVote {
                 let answer = Int(vote.votedOption)
                 var users = castedVotes[answer] ?? Set<ZMUser>()
                 users.insert(message.sender)
