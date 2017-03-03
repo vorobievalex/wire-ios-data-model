@@ -1,5 +1,5 @@
 github "wireapp/wire-ios-cryptobox" ~> 8.0
-github "wireapp/wire-ios-protos" ~> 9.1
+github "wireapp/wire-ios-protos" "prototype/polls"
 github "wireapp/libPhoneNumber-iOS" ~> 0.9
 github "wireapp/PINCache" ~> 2.3
 github "wireapp/wire-ios-transport" ~> 18.0
