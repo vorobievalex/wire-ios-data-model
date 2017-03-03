@@ -1148,8 +1148,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     VerifyReturnNil(genericMessage != nil);
     
     ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
-    [message addData:genericMessage.data];
-    message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
+    ZMUser *sender = [ZMUser selfUserInContext:self.managedObjectContext];
+    [message addData:genericMessage.data sender: sender];
+    message.sender = sender;
     message.isEncrypted = YES;
     
     if (expires) {
@@ -1169,8 +1170,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     VerifyReturnNil(data != nil);
     
     ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
-    [message addData:data];
-    message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
+    ZMUser *sender = [ZMUser selfUserInContext:self.managedObjectContext];
+    [message addData:data sender:sender];
+    message.sender = sender;
     [message setExpirationDate];
     [message updateCategoryCache];
     [self sortedAppendMessage:message];

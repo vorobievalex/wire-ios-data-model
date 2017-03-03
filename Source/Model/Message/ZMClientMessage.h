@@ -39,7 +39,7 @@ extern NSString * _Nonnull const ZMClientMessageLinkPreviewKey;
 @property (nonatomic) NSDate * _Nullable updatedTimestamp;
 @property (nonatomic, readonly) ZMGenericMessage * _Nullable genericMessage;
 
-- (void)addData:(NSData * _Nonnull)data;
+- (void)addData:(NSData * _Nonnull)data sender:(ZMUser * _Nullable)user;
 
 - (BOOL)hasDownloadedImage;
 

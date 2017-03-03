@@ -29,6 +29,7 @@ static NSString * const ZMGenericMessageDataDataKey = @"data";
 @dynamic data;
 @dynamic message;
 @dynamic asset;
+@dynamic sender;
 
 + (NSString *)entityName
 {

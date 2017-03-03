@@ -23,6 +23,7 @@
 @class ZMGenericMessage;
 @class ZMClientMessage;
 @class ZMAssetClientMessage;
+@class ZMUser;
 
 @interface ZMGenericMessageData: ZMManagedObject
 
@@ -30,6 +31,7 @@
 @property (nonatomic, readonly) ZMGenericMessage *genericMessage;
 @property (nonatomic) ZMClientMessage *message;
 @property (nonatomic) ZMAssetClientMessage *asset;
+@property (nonatomic) ZMUser *sender;
 
 + (NSString *)entityName;
 

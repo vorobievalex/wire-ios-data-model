@@ -97,13 +97,13 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     return self.updatedTimestamp;
 }
 
-- (void)addData:(NSData *)data
+- (void)addData:(NSData *)data sender:(ZMUser *)sender
 {
     if (data == nil) {
         return;
     }
     
-    ZMGenericMessageData *messageData = [self mergeWithExistingData:data];
+    ZMGenericMessageData *messageData = [self mergeWithExistingData:data sender: sender];
     [self setGenericMessage:self.genericMessageFromDataSet];
     
     if (self.nonce == nil) {
@@ -125,7 +125,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     return _genericMessage;
 }
 
-- (ZMGenericMessageData *)mergeWithExistingData:(NSData *)data
+- (ZMGenericMessageData *)mergeWithExistingData:(NSData *)data sender:(ZMUser *)sender;
 {
     _genericMessage = nil;
     ZMGenericMessageData *existingMessageData = [self.dataSet firstObject];
@@ -138,6 +138,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         ZMGenericMessageData *messageData = [NSEntityDescription insertNewObjectForEntityForName:[ZMGenericMessageData entityName] inManagedObjectContext:self.managedObjectContext];
         messageData.data = data;
         messageData.message = self;
+        messageData.sender = sender;
         return messageData;
     }
 }
@@ -194,7 +195,13 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (void)updateWithGenericMessage:(ZMGenericMessage *)message updateEvent:(ZMUpdateEvent *__unused)updateEvent
 {
-    [self addData:message.data];
+    ZMUser *sender;
+    if (self.sender.remoteIdentifier == updateEvent.senderUUID) {
+        sender = self.sender;
+    } else {
+        sender = [ZMUser userWithRemoteID:updateEvent.senderUUID createIfNeeded:YES inContext:self.managedObjectContext];
+    }
+    [self addData:message.data sender:sender];
     [self updateNormalizedText];
 }
 
@@ -497,18 +504,19 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     ZMLinkPreview *updatedPreview = [linkPreview updateWithOtrKey:keys.otrKey sha256:keys.sha256 original:original];
     
+    ZMUser *sender = [ZMUser selfUserInContext:self.managedObjectContext];
     if (self.genericMessage.hasText ||
         (self.genericMessage.hasEphemeral && self.genericMessage.ephemeral.hasText))
     {
         [self addData:[ZMGenericMessage messageWithText:self.textMessageData.messageText
                                                    linkPreview:updatedPreview
                                                          nonce:self.nonce.transportString
-                                                   expiresAfter:@(self.deletionTimeout)].data];
+                                           expiresAfter:@(self.deletionTimeout)].data sender: sender];
     } else if (self.genericMessage.hasEdited) {
         [self addData:[ZMGenericMessage messageWithEditMessage:self.genericMessage.edited.replacingMessageId
                                                        newText:self.textMessageData.messageText
                                                    linkPreview:updatedPreview
-                                                         nonce:self.nonce.transportString].data];
+                                                         nonce:self.nonce.transportString].data sender: sender];
     }
 
     [self.managedObjectContext enqueueDelayedSave];
@@ -594,7 +602,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         ZMGenericMessage *obfuscatedMessage = [self.genericMessage obfuscatedMessage];
         [self deleteContent];
         if (obfuscatedMessage != nil) {
-            [self mergeWithExistingData:obfuscatedMessage.data];
+            [self mergeWithExistingData:obfuscatedMessage.data sender: nil];
             [self setGenericMessage:self.genericMessageFromDataSet];
         }
     }
