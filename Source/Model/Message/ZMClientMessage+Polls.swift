@@ -55,7 +55,7 @@ extension ZMPollMessageData {
             return entries[voteIdx]
         }
         
-        self.init(entries: entries, votes: votes, message: message)
+        self.init(question: pollContent.question, entries: entries, votes: votes, message: message)
     }
 }
 

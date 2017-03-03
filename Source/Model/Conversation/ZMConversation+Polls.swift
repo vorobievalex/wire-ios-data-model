@@ -21,13 +21,15 @@ import ZMProtos
 
 @objc public final class ZMPollMessageData: NSObject {
     public let entries: [String]
+    public let question: String
     public weak var message: ZMClientMessage?
     public fileprivate(set) var votes: [String : Set<ZMUser>]
     
-    public init(entries: [String], votes: [String : Set<ZMUser>] = [String : Set<ZMUser>](), message: ZMClientMessage) {
+    public init(question: String, entries: [String], votes: [String : Set<ZMUser>] = [String : Set<ZMUser>](), message: ZMClientMessage) {
         self.entries = entries
         self.votes = votes
         self.message = message
+        self.question = question
     }
     
     public func castVote(index: Int) {
@@ -41,7 +43,7 @@ import ZMProtos
         if let previousVote = message.currentVoteMessageData {
             message.managedObjectContext?.delete(previousVote)
         }
-        let dataSet = message.mutableOrderedSetValue(forKey: "dataSet") as! NSMutableOrderedSet
+        let dataSet = message.mutableOrderedSetValue(forKey: "dataSet")
         let messageData = ZMGenericMessageData.insertNewObject(in: message.managedObjectContext!)
         messageData.data = genericMessage.data()
         messageData.message = message
@@ -54,8 +56,8 @@ import ZMProtos
 }
 
 extension ZMConversation {
-    public func appendPoll(options: [String]) -> ZMConversationMessage? {
-        guard let content = ZMPollContent.builder().setOptionsArray(options) else { return nil }
+    public func appendPoll(question: String, options: [String]) -> ZMConversationMessage? {
+        guard let content = ZMPollContent.builder().setOptionsArray(options).setQuestion(question) else { return nil }
         guard let poll = ZMPoll.builder().setContent(content) else { return nil }
         guard let message = ZMGenericMessage.builder().setPoll(poll).setMessageId(UUID().transportString()).build() else { return nil }
         return append(message, expires: false, hidden: false)
