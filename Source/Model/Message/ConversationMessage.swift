@@ -71,6 +71,8 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// The location message data associated with the message. If the message is not a location message, it will be nil
     var locationMessageData: ZMLocationMessageData? { get }
     
+    var pollMessageData: ZMPollMessageData? { get }
+    
     var usersReaction : Dictionary<String, [ZMUser]> { get }
     
     /// Request the download of the file if not already present.
@@ -136,6 +138,10 @@ extension ZMMessage {
 extension ZMMessage : ZMConversationMessage {
     public var causedSecurityLevelDegradation : Bool {
         return false
+    }
+    
+    public var pollMessageData: ZMPollMessageData? {
+        return nil
     }
 }
 
