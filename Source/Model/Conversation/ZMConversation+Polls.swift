@@ -19,19 +19,18 @@
 import Foundation
 import ZMProtos
 
-public final class PollEntry: NSObject {
-    public let option: String
-    public let users: [ZMUser]
+@objc public final class ZMPollMessageData: NSObject {
+    public let entries: [String]
+    public fileprivate(set) var votes = [String : Set<ZMUser>]()
     
-    public init(option: String, users: [ZMUser]) {
-        self.option = option
-        self.users = users
-        super.init()
+    public init(entries: [String]) {
+        self.entries = entries
     }
-}
-
-@objc public protocol ZMPollMessageData: NSObjectProtocol {
-    var entries: [PollEntry] { get }
+    
+    public func castVote(index: Int) {
+        
+    }
+    
 }
 
 extension ZMConversation {
