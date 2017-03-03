@@ -21,10 +21,11 @@ import ZMProtos
 
 @objc public final class ZMPollMessageData: NSObject {
     public let entries: [String]
-    public fileprivate(set) var votes = [String : Set<ZMUser>]()
+    public fileprivate(set) var votes: [String : Set<ZMUser>]
     
-    public init(entries: [String]) {
+    public init(entries: [String], votes: [String : Set<ZMUser>] = [String : Set<ZMUser>]()) {
         self.entries = entries
+        self.votes = votes
     }
     
     public func castVote(index: Int) {

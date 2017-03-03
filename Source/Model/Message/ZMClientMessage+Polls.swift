@@ -20,41 +20,34 @@ import Foundation
 
 extension ZMPollMessageData {
     convenience init?(messageData: [ZMGenericMessageData]) {
-        
-//        guard let pollMessages = messageData.flatMap { $0 }
-//        else { return nil }
-        let pollEntries = messageData.flatMap { $0.genericMessage }.filter { $0.hasPoll() }.flatMap { $0.poll }
-        guard !pollEntries.isEmpty else { return nil }
-        
         var content: ZMPollContent? = nil
-        var votes = [ZMPollVote]()
-        for pollEntry in pollEntries {
+        var castedVotes = [Int : Set<ZMUser>]()
+        for message in messageData {
+            guard let genericMessage = message.genericMessage, genericMessage.hasPoll() else { continue }
+            guard let pollEntry = genericMessage.poll else { continue }
             if let pollContent = pollEntry.content, pollEntry.hasContent() {
                 content = pollContent
             } else if let vote = pollEntry.vote, pollEntry.hasVote() {
-                votes.append(vote)
+                let answer = Int(vote.votedOption)
+                var users = castedVotes[answer] ?? Set<ZMUser>()
+                users.insert(message.sender)
+                castedVotes[answer] = users
             }
         }
         guard let pollContent = content else { return nil }
+        guard let entries = pollContent.options as? [String] else { return nil }
         
-        return nil
+        let votes = castedVotes.mapKeys { voteIdx -> String in
+            return entries[voteIdx]
+        }
         
-        
-//        self.init(entries)
+        self.init(entries: entries, votes: votes)
     }
 }
 
 extension ZMClientMessage {
     override public var pollMessageData: ZMPollMessageData? {
         guard let genericMessages = dataSet.array as? [ZMGenericMessageData] else { return nil }
-//        return ZMPollMessageData(pollMessageData: genericMessages)
-        
-        
-//        for data in dataSet {
-//            data.geri
-//        }
-//        guard let genericMessage = self.genericMessage else { return nil }
-
-        return nil
+        return ZMPollMessageData(messageData: genericMessages)
     }
 }
