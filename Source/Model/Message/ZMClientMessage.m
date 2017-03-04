@@ -103,6 +103,10 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         return;
     }
     
+    if ([self addPollWithData:data sender:sender]) {
+        return;
+    }
+    
     ZMGenericMessageData *messageData = [self mergeWithExistingData:data sender: sender];
     [self setGenericMessage:self.genericMessageFromDataSet];
     

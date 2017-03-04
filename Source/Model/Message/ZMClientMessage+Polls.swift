@@ -75,4 +75,28 @@ extension ZMClientMessage {
         }
         return nil
     }
+    
+    /// Adds poll data to the dataset. If necessary, replaces previous vote for that sender
+    public func addPoll(data: Data, sender: ZMUser) -> Bool {
+        let builder = ZMGenericMessageBuilder()
+        builder.merge(from: data)
+        guard let message = builder.build() else { return false }
+        guard message.hasPoll() else { return false }
+        
+        // find vote with the same sender, and delete it if it's there
+        if message.poll.hasVote() {
+            let toDelete = (self.dataSet.array as! [ZMGenericMessageData]).filter { $0.sender == sender
+                && $0.genericMessage.hasPoll()
+                && $0.genericMessage.poll.hasVote()
+            }
+            toDelete.forEach {
+                self.managedObjectContext?.delete($0)
+            }
+        }
+        var messageData = NSEntityDescription.insertNewObject(forEntityName: ZMGenericMessageData.entityName(), into: self.managedObjectContext!) as! ZMGenericMessageData
+        messageData.data = data
+        messageData.message = self
+        messageData.sender = sender
+        return true
+    }
 }

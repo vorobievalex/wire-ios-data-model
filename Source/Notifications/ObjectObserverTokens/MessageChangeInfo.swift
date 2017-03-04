@@ -64,6 +64,7 @@ extension ZMClientMessage {
                               #keyPath(ZMClientMessage.linkPreviewState),
                               #keyPath(ZMClientMessage.genericMessage),
                               #keyPath(ZMMessage.reactions),
+                              #keyPath(ZMClientMessage.pollMessageData),
                               MessageKey.linkPreview.rawValue]
         return keys.union(additionalKeys)
     }

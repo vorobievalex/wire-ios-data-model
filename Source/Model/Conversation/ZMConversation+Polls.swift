@@ -43,16 +43,21 @@ import ZMProtos
         if let previousVote = message.currentVoteMessageData {
             message.managedObjectContext?.delete(previousVote)
         }
-        let dataSet = message.mutableOrderedSetValue(forKey: "dataSet")
         let messageData = ZMGenericMessageData.insertNewObject(in: message.managedObjectContext!)
         messageData.data = genericMessage.data()
         messageData.message = message
-        messageData.sender = ZMUser.selfUser(in: message.managedObjectContext!)
-            
-        dataSet.add(messageData)
-        message.dataSet = dataSet
+        messageData.sender = ZMUser.selfUser(in: message.managedObjectContext!)            
         message.delivered = false
+        self.message?.managedObjectContext?.saveOrRollback()
+        
+        NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,
+                                                        changedKeys: [],
+                                                        uiContext: self.message!.managedObjectContext!.zm_userInterface)
     }
+}
+
+func ==(lhs: ZMPollMessageData, rhs: ZMPollMessageData) -> Bool {
+    return lhs.question == rhs.question && lhs.entries == rhs.entries && lhs.votes == rhs.votes
 }
 
 extension ZMConversation {
