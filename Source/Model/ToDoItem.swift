@@ -67,6 +67,10 @@ open class ToDoItem: ZMManagedObject {
         self.isDone = true
     }
     
+    public func delete(inUserSession userSession: ZMManagedObjectContextProvider) {
+        userSession.managedObjectContext.delete(self)
+    }
+    
     public static func allItems(inUserSession userSession: ZMManagedObjectContextProvider) -> [ToDoItem] {
         guard let uiMOC = userSession.managedObjectContext else { return [] }
         let fetchRequest = NSFetchRequest<ToDoItem>(entityName: self.entityName())
