@@ -267,6 +267,9 @@ NSString * const ZMMessageDeliveryStateKey = @"deliveryState";
 
 - (void)setNonce:(NSUUID *)nonce;
 {
+    if (nonce == nil) {
+        NSLog(@"Ah-ah!");
+    }
     [self setTransientUUID:nonce forKey:@"nonce"];
 }
 

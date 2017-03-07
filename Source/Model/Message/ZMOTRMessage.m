@@ -190,6 +190,9 @@ NSString * const DeliveredKey = @"delivered";
         [ZMMessageConfirmation createOrUpdateMessageConfirmation:message conversation:conversation sender:sender];
         return nil;
     }
+    if (message.hasPoll) {
+        
+    }
     ZMMessage *clearedMessage;
     if (message.hasEdited) {
         clearedMessage = [ZMMessage clearedMessageForRemotelyEditedMessage:message inConversation:conversation senderID:updateEvent.senderUUID inManagedObjectContext:moc];
@@ -227,8 +230,15 @@ NSString * const DeliveredKey = @"delivered";
     if (clientMessage == nil) {
         clientMessage = [messageClass insertNewObjectInManagedObjectContext:moc];
         isNewMessage = YES;
-    } else if (![clientMessage.senderClientID isEqualToString:updateEvent.senderClientID]) {
-        return nil;
+    } else {
+        if (message.hasPoll && clientMessage.pollMessageData != nil) {
+            ZMUser *sender = [ZMUser userWithRemoteID:updateEvent.senderUUID createIfNeeded:YES inContext:moc];
+            [(ZMClientMessage *)clientMessage addPollWithData:message.data sender:sender];
+            return nil;
+        }
+        if (![clientMessage.senderClientID isEqualToString:updateEvent.senderClientID]) {
+            return nil;
+        }
     }
     
     clientMessage.isEncrypted = encrypted;

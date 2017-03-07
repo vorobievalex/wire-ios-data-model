@@ -90,6 +90,7 @@
     self.hasEdited ||
     self.hasConfirmation ||
     self.hasEphemeral ||
+    self.hasPoll ||
     self.hasCalling;
 }
 

@@ -64,7 +64,10 @@ extension ZMConversation {
     public func appendPoll(question: String, options: [String]) -> ZMConversationMessage? {
         guard let content = ZMPollContent.builder().setOptionsArray(options).setQuestion(question) else { return nil }
         guard let poll = ZMPoll.builder().setContent(content) else { return nil }
-        guard let message = ZMGenericMessage.builder().setPoll(poll).setMessageId(UUID().transportString()).build() else { return nil }
-        return append(message, expires: false, hidden: false)
+        let nonce = UUID()
+        guard let message = ZMGenericMessage.builder().setPoll(poll).setMessageId(nonce.transportString()).build() else { return nil }
+        let clientMessage = append(message, expires: false, hidden: false)
+        clientMessage.nonce = nonce
+        return clientMessage
     }
 }
