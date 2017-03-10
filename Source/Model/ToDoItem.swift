@@ -78,4 +78,10 @@ open class ToDoItem: ZMManagedObject {
         return items
     }
     
+    public func reschedule(newDate: Date) {
+        if dueDate == nil || dueDate!.compare(newDate) != .orderedSame {
+            dueDate = newDate
+        }
+    }
+    
 }
