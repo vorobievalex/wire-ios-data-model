@@ -18,6 +18,7 @@
 
 @import ZMUtilities;
 
+#import "ZMUserTests.h"
 #import "ModelObjectsTests.h"
 
 #import "ZMUser+Internal.h"
@@ -49,7 +50,7 @@ static NSString *const SmallProfileRemoteIdentifierDataKey = @"smallProfileRemot
 static NSString *const ImageMediumDataKey = @"imageMediumData";
 static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
-@interface ZMUserTests : ModelObjectsTests
+@interface ZMUserTests()
 
 @property (nonatomic) NSArray *validPhoneNumbers;
 @property (nonatomic) NSArray *shortPhoneNumbers;
@@ -1003,6 +1004,8 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // given
     NSSet *expected = [NSSet setWithArray:@[@"accentColorValue",
                                             @"emailAddress",
+                                            @"previewProfileAssetIdentifier",
+                                            @"completeProfileAssetIdentifier",
                                             @"imageMediumData",
                                             @"imageSmallProfileData",
                                             @"smallProfileRemoteIdentifier_data",
@@ -1108,17 +1111,19 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
 - (void)testThatCallingRefreshDataMarksItAsToDownload {
     
-    // GIVEN
-    ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
-    user.remoteIdentifier = [NSUUID UUID];
-    user.needsToBeUpdatedFromBackend = false;
-    XCTAssertFalse(user.needsToBeUpdatedFromBackend);
-    
-    // WHEN
-    [user refreshData];
-    
-    // THEN
-    XCTAssertTrue(user.needsToBeUpdatedFromBackend);
+    [self.syncMOC performBlockAndWait: ^{
+        // GIVEN
+        ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
+        user.remoteIdentifier = [NSUUID UUID];
+        user.needsToBeUpdatedFromBackend = false;
+        XCTAssertFalse(user.needsToBeUpdatedFromBackend);
+        
+        // WHEN
+        [user refreshData];
+        
+        // THEN
+        XCTAssertTrue(user.needsToBeUpdatedFromBackend);
+    }];
 }
 
 @end
@@ -1804,6 +1809,19 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         // then
         XCTAssertEqualObjects(user.name, veryLongName);
     }];
+}
+
+- (void)testThatExtremeCombiningCharactersAreRemovedFromTheName
+{
+    // GIVEN
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    [self.uiMOC saveOrRollback];
+    
+    // WHEN
+    user.name = @"ť̹̱͉̥̬̪̝ͭ͗͊̕e͇̺̳̦̫̣͕ͫͤ̅s͇͎̟͈̮͎̊̾̌͛ͭ́͜t̗̻̟̙͑ͮ͊ͫ̂";
+    
+    // THEN
+    XCTAssertEqualObjects(user.name, @"test̻̟̙");
 }
 
 - (void)testThatItLimitsTheAccentColorToAValidRange;

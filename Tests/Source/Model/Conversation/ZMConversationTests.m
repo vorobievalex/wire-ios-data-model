@@ -1484,6 +1484,19 @@
     
 }
 
+- (void)testThatExtremeCombiningCharactersAreRemovedFromTheName
+{
+    // GIVEN
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    [self.uiMOC saveOrRollback];
+    
+    // WHEN
+    conversation.userDefinedName = @"ť̹̱͉̥̬̪̝ͭ͗͊̕e͇̺̳̦̫̣͕ͫͤ̅s͇͎̟͈̮͎̊̾̌͛ͭ́͜t̗̻̟̙͑ͮ͊ͫ̂";
+
+    // THEN
+    XCTAssertEqualObjects(conversation.userDefinedName, @"test̻̟̙");
+}
+
 @end
 
 
@@ -3749,3 +3762,72 @@
 
 @end
 
+
+@implementation ZMConversationTests (SystemMessags)
+
+- (void)testThatItSetsHasUnreadMissedCallForMissedCallMessages
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSDate *orginalDate = [NSDate dateWithTimeIntervalSinceNow:-20];
+        conversation.lastReadServerTimeStamp = orginalDate;
+        conversation.lastServerTimeStamp = orginalDate;
+        [conversation updateUnread];
+        
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        
+        XCTAssertFalse(conversation.hasUnreadMissedCall);
+        
+        // when
+        [conversation appendMissedCallMessageFromUser:user at:[NSDate date]];
+        
+        // then
+        XCTAssertTrue(conversation.hasUnreadMissedCall);
+        XCTAssertNotEqual(conversation.lastServerTimeStamp, orginalDate);
+        XCTAssertEqualWithAccuracy([conversation.lastServerTimeStamp timeIntervalSince1970], [[NSDate date] timeIntervalSince1970], 0.5);
+    }];
+}
+
+- (void)testThatItUnarchivesWhenAppendingAMissedCall
+{
+    [self.syncMOC performGroupedBlock:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.isArchived = YES;
+
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        XCTAssertTrue(conversation.isArchived);
+
+        // when
+        [conversation appendMissedCallMessageFromUser:user at:[NSDate date]];
+
+        // then
+        XCTAssertFalse(conversation.isArchived);
+    }];
+
+    XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
+}
+
+- (void)testThatItUnarchivesWhenAppendingAPerformedCall
+{
+    [self.syncMOC performGroupedBlock:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.isArchived = YES;
+
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        XCTAssertTrue(conversation.isArchived);
+
+        // when
+        [conversation appendPerformedCallMessageWith:42 caller:user];
+
+        // then
+        XCTAssertFalse(conversation.isArchived);
+    }];
+
+    XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
+
+}
+
+@end

@@ -147,6 +147,7 @@ public class NotificationDispatcher : NSObject {
                                            ZMMessage.classIdentifier,
                                            ZMClientMessage.classIdentifier,
                                            ZMAssetClientMessage.classIdentifier,
+                                           ZMSystemMessage.classIdentifier,
                                            Reaction.classIdentifier,
                                            ZMGenericMessageData.classIdentifier]
         self.affectingKeysStore = DependencyKeyStore(classIdentifiers : classIdentifiers)
@@ -214,8 +215,11 @@ public class NotificationDispatcher : NSObject {
         let change = Changes(changedKeys: Set(changedKeys))
 
         let objectAndChangedKeys = [object: change]
-        allChanges = allChanges.merged(with: objectAndChangedKeys) 
-        managedObjectContext.forceSaveOrRollback()
+        allChanges = allChanges.merged(with: objectAndChangedKeys)
+        // Fire notifications only if there won't be a save happening anytime soon
+        if !managedObjectContext.zm_hasChanges {
+            fireAllNotifications()
+        }
     }
     
     /// Forwards inserted and deleted conversations to the conversationList observer to update lists accordingly
@@ -225,8 +229,7 @@ public class NotificationDispatcher : NSObject {
         let insertedObjects = (userInfo[NSInsertedObjectsKey] as? Set<NSManagedObject>)?.flatMap{$0 as? ZMConversation} ?? []
         let deletedObjects = (userInfo[NSDeletedObjectsKey] as? Set<NSManagedObject>)?.flatMap{$0 as? ZMConversation} ?? []
         conversationListObserverCenter.conversationsChanges(inserted: insertedObjects,
-                                                            deleted: deletedObjects,
-                                                            accumulated: false)
+                                                            deleted: deletedObjects)
     }
     
     /// Call this from syncStrategy AFTER merging the changes from syncMOC into uiMOC
