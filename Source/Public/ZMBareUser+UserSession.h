@@ -14,8 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 #import <ZMCDataModel/ZMBareUser.h>
 #import <ZMCDataModel/ZMUser.h>
@@ -23,6 +22,8 @@
 
 @class ZMUserSession, ZMAddressBookContact;
 
+@protocol ZMCommonContactsSearchDelegate;
+@protocol ZMCommonContactsSearchToken;
 
 @protocol ZMSearchableUser <ZMBareUser>
 
