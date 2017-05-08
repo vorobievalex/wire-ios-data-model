@@ -2528,9 +2528,11 @@
 - (void)testThatArchivingAConversationSetsTheArchivedTimestamp
 {
     // given
-    NSDate *archivedTimestamp = [NSDate date];
+    NSDate *archivedTimestamp = [NSDate dateWithTimeIntervalSince1970:100];
+    NSDate *lastServerTimeStamp = [NSDate dateWithTimeIntervalSince1970:200];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastServerTimeStamp = archivedTimestamp;
+    conversation.lastServerTimeStamp = lastServerTimeStamp;
+    conversation.lastModifiedDate = archivedTimestamp;
     
     // when
     conversation.isArchived = YES;
@@ -2546,18 +2548,18 @@
     NSDate *unarchivedTimestamp = [archivedTimestamp dateByAddingTimeInterval:100];
 
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.lastServerTimeStamp = archivedTimestamp;
+    conversation.lastModifiedDate = archivedTimestamp;
     conversation.isArchived = YES;
     XCTAssertNotNil(conversation.archivedChangedTimestamp);
-    XCTAssertEqual([conversation.archivedChangedTimestamp timeIntervalSince1970], [conversation.lastServerTimeStamp timeIntervalSince1970]);
+    XCTAssertEqual([conversation.archivedChangedTimestamp timeIntervalSince1970], [conversation.lastModifiedDate timeIntervalSince1970]);
 
     // when
-    conversation.lastServerTimeStamp = unarchivedTimestamp;
+    conversation.lastModifiedDate = unarchivedTimestamp;
     conversation.isArchived = NO;
     
     // then
     XCTAssertNotNil(conversation.archivedChangedTimestamp);
-    XCTAssertEqual([conversation.archivedChangedTimestamp timeIntervalSince1970], [conversation.lastServerTimeStamp timeIntervalSince1970]);
+    XCTAssertEqual([conversation.archivedChangedTimestamp timeIntervalSince1970], [conversation.lastModifiedDate timeIntervalSince1970]);
 }
 
 @end

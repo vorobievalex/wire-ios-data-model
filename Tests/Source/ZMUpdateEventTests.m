@@ -184,7 +184,7 @@
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = NSUUID.createUUID;
-    conversation.lastServerTimeStamp = [NSDate date];
+    conversation.lastModifiedDate = [NSDate date];
     conversation.isArchived = YES;
     
     // when
