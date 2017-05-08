@@ -182,7 +182,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (void)setIsArchived:(BOOL)isArchived
 {
     self.internalIsArchived = isArchived;
-    [self updateArchivedChangedTimeStampIfNeeded:self.lastServerTimeStamp andSync:YES];
+    [self updateArchivedChangedTimeStampIfNeeded:self.lastModifiedDate andSync:YES];
 }
 
 - (NSUInteger)estimatedUnreadCount
