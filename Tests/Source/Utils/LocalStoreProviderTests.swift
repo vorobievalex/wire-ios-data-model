@@ -104,11 +104,11 @@ extension LocalStoreProviderTests {
         XCTAssertEqual(fileManager.calledGroupIdentifier, appGroupIdentifier)
     }
     
-    func testItFallsBackToUserDocumentsDirectoryIfSharedContainerIsNotAvailable() {
+    func testItFallsBackToOtherDirectoryIfSharedContainerIsNotAvailable() {
         // given
         fileManager.containerURL = nil
-        let documentsDirectory = URL(fileURLWithPath: "path/to/documents")
-        fileManager.urlsForDirectory = [documentsDirectory]
+        let directory = URL(fileURLWithPath: "path/to/somewhere")
+        fileManager.urlsForDirectory = [directory]
         
         // when
         var containerURL: URL?
@@ -117,20 +117,39 @@ extension LocalStoreProviderTests {
         }
         
         // then
-        XCTAssertEqual(containerURL, documentsDirectory)
+        XCTAssertEqual(containerURL, directory)
         XCTAssertEqual(fileManager.calledDomainMask, .userDomainMask)
-        XCTAssertEqual(fileManager.calledDirectory, .documentDirectory)
+        XCTAssertEqual(fileManager.calledDirectory, .applicationSupportDirectory)
     }
     
-    func testThatCachesAreNilWhenContainerIsNil() {
+    func testThatCachesFallsBackToOtherDirectoryIfSharedContainerIsNotAvailable() {
         // given
         fileManager.containerURL = nil
+        let directory = URL(fileURLWithPath: "path/to/somewhere")
+        let cachesURL = directory.appendingPathComponent("Library/Caches/\(LocalStoreProvider.cachesFolderPrefix)-\(sut.userIdentifier.uuidString)/")
+        fileManager.urlsForDirectory = [directory]
         
-        // then
-        XCTAssertNil(sut.cachesURL)
+        performIgnoringZMLogError {
+            // then
+            XCTAssertEqual(self.sut.cachesURL, cachesURL)
+        }
     }
     
-    func testThatCachesIsInSharedContainer_Library_Caches() {
+    func testThatCachesIsInSharedContainer_Library_Caches_UserId() {
+        // given
+        let containerURL = URL(fileURLWithPath: "some/file/path")
+        let cachesURL = containerURL.appendingPathComponent("Library/Caches/\(LocalStoreProvider.cachesFolderPrefix)-\(sut.userIdentifier.uuidString)/")
+        fileManager.containerURL = containerURL
+        XCTAssertNotNil(fileManager.containerURL)
+        
+        // when
+        XCTAssertEqual(sut.cachesURL, cachesURL)
+        
+        // then
+        XCTAssertEqual(fileManager.calledGroupIdentifier, appGroupIdentifier)
+    }
+    
+    func testThatBaseCachesIsInSharedContainer_Library_Caches() {
         // given
         let containerURL = URL(fileURLWithPath: "some/file/path")
         let cachesURL = containerURL.appendingPathComponent("Library/Caches/")
@@ -138,7 +157,7 @@ extension LocalStoreProviderTests {
         XCTAssertNotNil(fileManager.containerURL)
         
         // when
-        XCTAssertEqual(sut.cachesURL, cachesURL)
+        XCTAssertEqual(sut.baseCachesDirectory, cachesURL)
         
         // then
         XCTAssertEqual(fileManager.calledGroupIdentifier, appGroupIdentifier)
@@ -157,10 +176,12 @@ extension LocalStoreProviderTests {
     func testThatKeyStoreIsNilWhenContainerIsNil() {
         // given
         fileManager.containerURL = nil
+        let directory = URL(fileURLWithPath: "path/to/somewhere")
+        fileManager.urlsForDirectory = [directory]
         
-        // then
         performIgnoringZMLogError {
-            XCTAssertNil(self.sut.keyStoreURL)
+            // then
+            XCTAssertEqual(self.sut.keyStoreURL, directory)
         }
     }
     

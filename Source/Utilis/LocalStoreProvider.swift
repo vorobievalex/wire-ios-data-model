@@ -25,10 +25,10 @@ private let zmLog = ZMSLog(tag: "LocalStoreProvider")
     var userIdentifier: UUID { get }
     var appGroupIdentifier: String { get }
     var storeExists: Bool { get }
-    var storeURL: URL? { get }
-    var keyStoreURL: URL? { get }
-    var cachesURL: URL? { get }
-    var sharedContainerDirectory: URL? { get }
+    var storeURL: URL { get }
+    var keyStoreURL: URL { get }
+    var cachesURL: URL { get }
+    var sharedContainerDirectory: URL { get }
     
     /// Whether the local store is ready to be opened. If it returns false, the user session can't be started yet
     var isStoreReady: Bool { get }
@@ -76,10 +76,10 @@ extension FileManager: FileManagerProtocol {}
 
 extension LocalStoreProvider: LocalStoreProviderProtocol {
     
-    public var sharedContainerDirectory: URL? {
-        let directoryInContainer = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
-        
-        guard let directory = directoryInContainer else {
+    public var sharedContainerDirectory: URL {
+        if let sharedContainerURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {
+            return sharedContainerURL
+        } else {
             // Seems like the shared container is not available. This could happen for series of reasons:
             // 1. The app is compiled with with incorrect provisioning profile (for example with 3rd parties)
             // 2. App is running on simulator and there is no correct provisioning profile on the system
@@ -88,43 +88,46 @@ extension LocalStoreProvider: LocalStoreProviderProtocol {
             // The app should allow not having a shared container in cases 1 and 2; in case 3 the app should crash
             
             let deploymentEnvironment = ZMDeploymentEnvironment().environmentType()
-            if TARGET_IPHONE_SIMULATOR == 0 && (deploymentEnvironment == ZMDeploymentEnvironmentType.appStore || deploymentEnvironment == ZMDeploymentEnvironmentType.internal) {
-                return nil
-            }
-            else {
-                zmLog.error(String(format: "ERROR: self.databaseDirectoryURL == nil and deploymentEnvironment = %d", deploymentEnvironment.rawValue))
+            if (TARGET_OS_SIMULATOR == 0 && (deploymentEnvironment == .appStore || deploymentEnvironment == .internal)) {
+                fatal("Unable to create shared container url using app group identifier: \(appGroupIdentifier)")
+            } else {
+                zmLog.error("ERROR: self.databaseDirectoryURL == nil and deploymentEnvironment = \(deploymentEnvironment)")
                 zmLog.error("================================WARNING================================")
                 zmLog.error("Wire is going to use APPLICATION SUPPORT directory to host the database")
                 zmLog.error("================================WARNING================================")
+                return fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
             }
-            return fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
         }
-        return directory
     }
     
-    public var cachesURL: URL? {
-        return fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)?.appendingPathComponent("Library", isDirectory: true).appendingPathComponent("Caches", isDirectory: true)
+    public var baseCachesDirectory: URL {
+        return sharedContainerDirectory.appendingPathComponent("Library", isDirectory: true)
+            .appendingPathComponent("Caches", isDirectory: true)
+    }
+    
+    public static let cachesFolderPrefix : String = "wire-account"
+    
+    public var cachesURL: URL {
+        return baseCachesDirectory.appendingPathComponent("\(type(of:self).cachesFolderPrefix)-\(userIdentifier.uuidString)", isDirectory: true)
     }
     
     public var isStoreReady: Bool {
         return NSManagedObjectContext.storeIsReady()
     }
     
-    public var storeURL: URL? {
-        return sharedContainerDirectory?.appendingPathComponent(bundleIdentifier, isDirectory: true).appendingPathComponent("store.wiredatabase")
+    public var storeURL: URL {
+        return sharedContainerDirectory.appendingPathComponent(bundleIdentifier, isDirectory: true).appendingPathComponent("store.wiredatabase")
     }
     
-    public var keyStoreURL: URL? {
+    public var keyStoreURL: URL {
         return sharedContainerDirectory
     }
     
     public var storeExists: Bool {
-        guard let storeURL = self.storeURL else { return false }
         return NSManagedObjectContext.storeExists(at: storeURL)
     }
     
     public var needsToPrepareLocalStore: Bool {
-        guard let storeURL = self.storeURL else { return false }
         return NSManagedObjectContext.needsToPrepareLocalStoreForAccount(withIdentifier: userIdentifier, inSharedContainerAt: storeURL)
     }
     
@@ -133,5 +136,4 @@ extension LocalStoreProvider: LocalStoreProviderProtocol {
         let shouldBackupCorruptedDatabase = environment == .internal // TODO: on debug build as well
         NSManagedObjectContext.prepareLocalStoreForAccount(withIdentifier: userIdentifier, inSharedContainerAt: self.storeURL, backupCorruptedDatabase: shouldBackupCorruptedDatabase, synchronous: false, completionHandler: completionHandler)
     }
-    
 }
