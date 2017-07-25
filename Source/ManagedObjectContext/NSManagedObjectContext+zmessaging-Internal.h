@@ -19,13 +19,13 @@
 
 #import "NSManagedObjectContext+zmessaging.h"
 
+@protocol LocalStoreProviderProtocol;
 
 @interface NSManagedObjectContext (zmessaging_Internal)
 
 + (BOOL)databaseExistsButIsNotReadableDueToEncryptionAtURL:(NSURL *)storeURL;
 + (NSURL *)storeURLInDirectory:(NSSearchPathDirectory)directory;
-+ (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorForAccountWithIdentifier:(NSUUID *)accountIdentifier
-                                                                     inSharedContainerAt:(NSURL*)sharedContainerURL
-                                                                  backupCorrupedDatabase:(BOOL)backupCorruptedDatabase;
++ (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorForAccountWithProvider:(id<LocalStoreProviderProtocol>)provider
+                                                                    backupCorrupedDatabase:(BOOL)backupCorruptedDatabase;
 
 @end

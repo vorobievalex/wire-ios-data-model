@@ -128,12 +128,12 @@ extension LocalStoreProvider: LocalStoreProviderProtocol {
     }
     
     public var needsToPrepareLocalStore: Bool {
-        return NSManagedObjectContext.needsToPrepareLocalStoreForAccount(withIdentifier: userIdentifier, inSharedContainerAt: storeURL)
+        return NSManagedObjectContext.needsToPrepareLocalStore(withProvider: self)
     }
     
     public func prepareLocalStore(completion completionHandler: @escaping (() -> ())) {
         let environment = ZMDeploymentEnvironment().environmentType()
         let shouldBackupCorruptedDatabase = environment == .internal // TODO: on debug build as well
-        NSManagedObjectContext.prepareLocalStoreForAccount(withIdentifier: userIdentifier, inSharedContainerAt: self.storeURL, backupCorruptedDatabase: shouldBackupCorruptedDatabase, synchronous: false, completionHandler: completionHandler)
+        NSManagedObjectContext.prepareLocalStoreForAccount(withProvider: self, backupCorruptedDatabase: shouldBackupCorruptedDatabase, synchronous: false, completionHandler: completionHandler)
     }
 }

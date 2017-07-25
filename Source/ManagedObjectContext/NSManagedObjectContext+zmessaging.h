@@ -23,6 +23,8 @@
 @import PINCache;
 
 @class NSOperationQueue;
+@class LocalStoreProvider;
+@protocol LocalStoreProviderProtocol;
 
 @interface NSManagedObjectContext (zmessaging)
 
@@ -32,27 +34,26 @@
 + (BOOL)storeExistsAtURL:(NSURL *)storeURL;
 
 /// Checks if migration is needed or the database has to be moved
-+ (BOOL)needsToPrepareLocalStoreForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL*)sharedContainerURL;
++ (BOOL)needsToPrepareLocalStoreWithProvider:(id<LocalStoreProviderProtocol>)provider;
 
 /// Creates persistent store coordinator and migrates store if needed
 /// @param synchronous defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
 ///         synchronously when @c +needsToPrepareLocalStore is YES)
-/// @param storeURL where database should be created / moved to
+/// @param provider wrapper around directories used for creating/reading store
 /// @param backupCorruptedDatabase if true, will copy a corrupted database to another folder for later investigation
 /// @param completionHandler callback to be executed on completion (nullable), will be invoked on an arbitrary queue, it's the
 ///     caller responsibility to ensure this is switched back to the correct queue
-+ (void)prepareLocalStoreForAccountWithIdentifier:(NSUUID *)accountIdentifier
-                              inSharedContainerAt:(NSURL*)sharedContainerURL
-                          backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
-                                      synchronous:(BOOL)synchronous
-                                completionHandler:(void(^)())completionHandler;
++ (void)prepareLocalStoreForAccountWithProvider:(id<LocalStoreProviderProtocol>)provider
+                            backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
+                                        synchronous:(BOOL)synchronous
+                                  completionHandler:(void(^)())completionHandler;
 
 /// Returns whether the store is ready to be opened
 + (BOOL)storeIsReady;
 
 /// Create context used by the UI
 /// @param storeURL where database is located
-+ (instancetype)createUserInterfaceContextForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL*)sharedContainerURL;
++ (instancetype)createUserInterfaceContextForAccountWithProvider:(id<LocalStoreProviderProtocol>)provider;
 
 /// Reset the user interface context. NOTE: only used in testing with a in-memory store.
 + (void)resetUserInterfaceContext;
@@ -61,11 +62,11 @@
 /// C.f. @c zm_isSyncContext
 /// @param storeURL where database is located
 /// @param keyStoreURL where cryptobox sessions are located
-+ (instancetype)createSyncContextForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL*)sharedContainerURL;
++ (instancetype)createSyncContextForAccountWithProvider:(id<LocalStoreProviderProtocol>)provider;
 
 /// Create context used for searching
 /// @param storeURL where database is located
-+ (instancetype)createSearchContextForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL*)sharedContainerURL;
++ (instancetype)createSearchContextForAccountWithProvider:(id<LocalStoreProviderProtocol>)provider;
 
 /// Returns @c YES if the receiver is a context that is used for synchronisation with the backend.
 ///
