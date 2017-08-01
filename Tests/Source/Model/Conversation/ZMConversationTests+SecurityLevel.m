@@ -302,7 +302,7 @@
     // then
     ZMConversation *uiConversation = [self.uiMOC existingObjectWithID:conversationObjectID error:nil];
     XCTAssertEqual(uiConversation.securityLevel, ZMConversationSecurityLevelSecure);
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 - (void)testThatIncreasesSecurityLevelOfCreatedGroupConversationWithAllParticipantsAlreadyTrusted
@@ -327,8 +327,6 @@
         XCTAssertEqual(message.systemMessageData.systemMessageType, ZMSystemMessageTypeConversationIsSecure);
         XCTAssertEqualObjects(message.systemMessageData.clients, [clients setByAddingObject:selfClient]);
     }];
-    
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
 - (void)testThatItDoesNotIncreaseSecurityLevelOfCreatedGroupConversationWithAllParticipantsIfNotAlreadyTrusted
@@ -347,9 +345,7 @@
         XCTAssertEqual(conversation.messages.count, 1lu);
         ZMSystemMessage *message = conversation.messages.lastObject;
         XCTAssertNotEqual(message.systemMessageType, ZMSystemMessageTypeConversationIsSecure);
-    }];
-    
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+    }];    
 }
 
 - (ZMUser *)insertUserInConversation:(ZMConversation *)conversation userIsTrusted:(BOOL)trusted managedObjectContext:(NSManagedObjectContext *)moc

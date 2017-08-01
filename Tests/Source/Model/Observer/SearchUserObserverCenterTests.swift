@@ -66,7 +66,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         sut.updateAndNotify()
         
         // then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertEqual(searchUser.imageSmallProfileData, sut.snapshotValues[ #keyPath(ZMSearchUser.imageSmallProfileData)] as? Data)
     }
     
@@ -92,7 +92,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         sut.updateAndNotify()
         
         // then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[ #keyPath(ZMSearchUser.isConnected)] as? Bool)
     }
     
@@ -119,7 +119,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         sut.updateAndNotify()
         
         // then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[ #keyPath(ZMSearchUser.isConnected)] as? Bool)
         XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[ #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
     }
@@ -143,7 +143,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         sut.updateAndNotify()
         
         // then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[ #keyPath(ZMSearchUser.isConnected)] as? Bool)
         XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[ #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
     }
@@ -224,7 +224,7 @@ class SearchUserObserverCenterTests : ModelObjectsTests {
         sut.objectsDidChange(changes: [ZMUser.classIdentifier: [changeInfo]])
         
         // then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
     }
     
     func testThatItForwardCallsForUserUpdatesToTheSnapshot(){
@@ -242,7 +242,7 @@ class SearchUserObserverCenterTests : ModelObjectsTests {
         searchUser.setAndNotifyNewMediumImageData(verySmallJPEGData(), searchUserObserverCenter: sut)
         
         // then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
     }
 }
 

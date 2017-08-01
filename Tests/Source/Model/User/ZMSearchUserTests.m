@@ -238,7 +238,7 @@
         XCTAssertEqual(connection.status, ZMConnectionStatusSent);
         XCTAssertEqualObjects(connection.message, @"Hey!");
     }];
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 - (void)testThatItDoesNotConnectIfTheSearchUserHasNoRemoteIdentifier;
@@ -260,7 +260,7 @@
     [user connectWithMessageText:@"Hey!" completionHandler:^{
         [callbackCalled fulfill];
     }];
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
     
     // then
     XCTAssertFalse(self.uiMOC.hasChanges);
@@ -297,7 +297,7 @@
     [searchUser connectWithMessageText:connectionMessage completionHandler:^{
         [callbackCalled fulfill];
     }];
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
     
     // then
     XCTAssertEqualObjects(searchUser.connectionRequestMessage, connectionMessage);
@@ -369,7 +369,7 @@
     [searchUser connectWithMessageText:@"Hey!" completionHandler:^{
         [callbackCalled fulfill];
     }];
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
     XCTAssert([self.uiMOC saveOrRollback]);
     
     // then
@@ -438,7 +438,7 @@
     [searchUser connectWithMessageText:@"Hey!" completionHandler:^{
         [callbackCalled fulfill];
     }];
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
     
     // then
     XCTAssertFalse(self.uiMOC.hasChanges);

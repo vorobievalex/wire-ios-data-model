@@ -1495,6 +1495,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         [expectation fulfill];
     }];
     [self.uiMOC saveOrRollback];
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -1518,6 +1519,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         [expectation fulfill];
     }];
     [self.uiMOC saveOrRollback];
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -2219,7 +2221,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
 
     // then
     XCTAssertTrue(user1.isBlocked);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 - (void)testThatItRecalculatesIsIgnoredWhenConnectionChanges
@@ -2240,7 +2242,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     
     // then
     XCTAssertTrue(user1.isIgnored);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 - (void)testThatItRecalculatesIsPendingApprovalBySelfUserWhenConnectionChanges
@@ -2261,7 +2263,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     
     // then
     XCTAssertFalse(user1.isPendingApprovalBySelfUser);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 - (void)testThatItRecalculatesIsPendingApprovalByOtherUsersWhenConnectionChanges
@@ -2282,7 +2284,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     
     // then
     XCTAssertFalse(user.isPendingApprovalByOtherUser);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 @end

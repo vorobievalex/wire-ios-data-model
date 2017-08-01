@@ -145,7 +145,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
         searchUser.connect(withMessageText: "Hey") { 
             callbackCalled.fulfill()
         }
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
         
         // then
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)
@@ -185,7 +185,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
             callbackCalled.fulfill()
         }
         XCTAssert(uiMOC.saveOrRollback())
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
         
         // when
         XCTAssertTrue(searchUser.user.isPendingApprovalByOtherUser)

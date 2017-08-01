@@ -317,7 +317,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.requestImageDownload()
         
         // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.2), line: line)
+        waitForExpectations(timeout: 0.2, handler: nil)
         observer.tearDown()
     }
     

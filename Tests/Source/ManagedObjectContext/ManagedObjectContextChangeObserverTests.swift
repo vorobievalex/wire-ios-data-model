@@ -36,7 +36,8 @@ class ManagedObjectContextChangeObserverTests : ZMBaseManagedObjectTest {
         }
 
         // then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.1))
+        
+        waitForExpectations(timeout: 0.1, handler: nil)
         _ = sut
     }
 
@@ -56,7 +57,7 @@ class ManagedObjectContextChangeObserverTests : ZMBaseManagedObjectTest {
         }
 
         // then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.1))
+        waitForExpectations(timeout: 0.1, handler: nil)
         _ = sut
     }
 
@@ -76,7 +77,7 @@ class ManagedObjectContextChangeObserverTests : ZMBaseManagedObjectTest {
         }
 
         // then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.1))
+        waitForExpectations(timeout: 0.1, handler: nil)
         _ = sut
     }
 

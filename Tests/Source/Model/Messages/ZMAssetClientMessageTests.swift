@@ -943,6 +943,7 @@ extension ZMAssetClientMessageTests {
             sut.fileMessageData?.cancelTransfer()
             
             // then
+            self.waitForExpectations(timeout: 0.5, handler: nil)
             XCTAssertEqual(sut.transferState, ZMFileTransferState.uploaded)
         }
     }
@@ -1772,7 +1773,7 @@ extension ZMAssetClientMessageTests {
         message.requestImageDownload()
 
         // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
     }
 }
 

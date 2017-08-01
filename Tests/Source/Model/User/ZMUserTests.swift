@@ -286,7 +286,7 @@ extension ZMUserTests {
         }
         
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
         _ = note // Silence warning
     }
     
@@ -308,7 +308,7 @@ extension ZMUserTests {
         }
         
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
         _ = note // Silence warning
     }
 }

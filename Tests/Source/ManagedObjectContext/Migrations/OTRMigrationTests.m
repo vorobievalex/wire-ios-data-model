@@ -64,7 +64,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [migrationExpectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     // then
@@ -113,7 +113,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [migrationExpectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -165,7 +165,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [migrationExpectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -213,7 +213,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [migrationExpectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -263,7 +263,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -313,7 +313,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -372,7 +372,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             }
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -429,7 +429,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -484,7 +484,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -540,7 +540,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -595,7 +595,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
 
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
 
     WaitForAllGroupsToBeEmpty(15);
@@ -650,7 +650,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -705,7 +705,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -762,7 +762,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
 
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
 
     WaitForAllGroupsToBeEmpty(15);
@@ -828,7 +828,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
 
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
 
     WaitForAllGroupsToBeEmpty(15);
@@ -891,7 +891,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
 
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
 
     WaitForAllGroupsToBeEmpty(15);
@@ -954,7 +954,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
         
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
     
     WaitForAllGroupsToBeEmpty(15);
@@ -1017,7 +1017,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
 
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
 
     WaitForAllGroupsToBeEmpty(15);
@@ -1074,7 +1074,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
 
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
 
     WaitForAllGroupsToBeEmpty(15);
@@ -1131,7 +1131,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
             [expectation fulfill];
         }];
 
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:10]);
+        [self waitForExpectationsWithTimeout:10 handler:nil];
     }];
 
     WaitForAllGroupsToBeEmpty(15);

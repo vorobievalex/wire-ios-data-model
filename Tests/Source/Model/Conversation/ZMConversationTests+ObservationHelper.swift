@@ -38,7 +38,7 @@ class ZMConversationObservationHelperTests: NotificationDispatcherTestBase {
         conversation.remoteIdentifier = UUID.create()
         uiMOC.saveOrRollback()
         XCTAssertNotNil(token)
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
         token = nil
     }
     
@@ -55,7 +55,7 @@ class ZMConversationObservationHelperTests: NotificationDispatcherTestBase {
         }
         
         XCTAssertNil(token)
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
         token = nil
     }
     

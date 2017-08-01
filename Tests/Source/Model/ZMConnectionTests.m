@@ -786,7 +786,7 @@
     connection.status = ZMConnectionStatusAccepted;
 
     // then
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.2]);
+    [self waitForExpectationsWithTimeout:0.2 handler:nil];
 }
 
 - (void)testThatItInsertsNewSentConnections;

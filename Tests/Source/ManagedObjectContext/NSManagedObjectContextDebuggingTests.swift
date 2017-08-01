@@ -40,7 +40,7 @@ class NSManagedObjectContextDebuggingTests : ZMBaseManagedObjectTest {
         }
         
         // THEN
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
     }
 }
 

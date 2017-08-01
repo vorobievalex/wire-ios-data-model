@@ -292,7 +292,7 @@
     
     // then
     WaitForAllGroupsToBeEmpty(0.5);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:token];
     
     XCTAssertEqualObjects([events componentsJoinedByString:@" "], @"A B C save");
@@ -336,7 +336,7 @@
     
     // then
     WaitForAllGroupsToBeEmpty(0.5);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:token];
     
     XCTAssertEqualObjects([events componentsJoinedByString:@" "], @"A B C save");
@@ -351,13 +351,14 @@
 - (void)testThatItDoesNotSaveWhenThereAreNoUserInfoChanges {
     
     // GIVEN
-    [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    XCTestExpectation *expectation = [self expectationForNotification:NSManagedObjectContextDidSaveNotification object:nil handler:nil];
+    expectation.inverted = YES;
     
     // WHEN
     [self.uiMOC saveOrRollback];
     
     // THEN
-    XCTAssertFalse([self waitForCustomExpectationsWithTimeout:0.001]);
+    [self waitForExpectationsWithTimeout:0.001 handler:nil];
 }
 
 - (void)testThatItSaveWhenThereAreUserInfoChanges {
@@ -370,7 +371,7 @@
     [self.uiMOC saveOrRollback];
     
     // THEN
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.1]);
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
 }
 
 - (void)testThatItResetsUserInfoChangesAfterASave {
@@ -383,7 +384,7 @@
     [self.uiMOC saveOrRollback];
     
     // THEN
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.1]);
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
     XCTAssertFalse(self.uiMOC.zm_hasUserInfoChanges);
 }
 

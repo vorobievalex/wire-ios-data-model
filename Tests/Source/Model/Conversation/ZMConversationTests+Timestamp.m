@@ -41,7 +41,7 @@
     }];
     
     [sut updateLastReadServerTimeStampIfNeededWithTimeStamp:[NSDate date] andSync:NO];
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
     
     // then
     XCTAssertTrue(didSendNote);

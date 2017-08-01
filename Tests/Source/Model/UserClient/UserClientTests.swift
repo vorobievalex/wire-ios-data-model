@@ -325,7 +325,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
@@ -379,7 +379,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // then
         self.syncMOC.performGroupedBlockAndWait {

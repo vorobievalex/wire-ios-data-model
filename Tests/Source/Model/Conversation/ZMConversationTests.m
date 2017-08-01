@@ -1013,7 +1013,7 @@
     conversation.isSelfAnActiveMember = NO;
     
     // then
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 - (void)testThatItRecalculatesIsReadOnlyWhenConversationTypeChanges
@@ -1030,7 +1030,7 @@
     conversation.conversationType = ZMConversationTypeGroup;
     
     // then
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 @end
@@ -1158,7 +1158,7 @@
     
     // then
     XCTAssertFalse(conversation.isPendingConnectionConversation);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 
@@ -1184,7 +1184,7 @@
     // then
     XCTAssertEqualObjects(conversation.connection, connection2);
     XCTAssertFalse(conversation.isPendingConnectionConversation);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 @end // connections
@@ -1978,7 +1978,7 @@
     XCTAssertTrue(conversation.isSelfAnActiveMember);
     XCTAssertEqual(conversation.otherActiveParticipants.count, 1u);
     XCTAssertEqual(conversation.activeParticipants.count, 2u);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 - (void)testThatItRecalculatesActiveParticipantsWhenIsSelfActiveUserKeyChanges
@@ -2008,7 +2008,7 @@
     XCTAssertFalse(conversation.isSelfAnActiveMember);
     XCTAssertEqual(conversation.otherActiveParticipants.count, 2u);
     XCTAssertEqual(conversation.activeParticipants.count, 2u);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 - (void)testThatItResetsModificationsToActiveParticipants
@@ -2109,7 +2109,7 @@
     
     // then
     XCTAssertFalse(conversation.hasDraftMessageText);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 
@@ -2142,7 +2142,7 @@
 
     // then
     XCTAssertEqualObjects(conversation.lastReadMessage, message3);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 
@@ -2171,7 +2171,7 @@
     
     // then
     XCTAssertEqualObjects(conversation.lastReadMessage, message2);
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 
