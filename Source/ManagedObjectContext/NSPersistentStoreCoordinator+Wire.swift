@@ -43,7 +43,7 @@ extension NSPersistentStoreCoordinator {
             }
         }
         
-        let storeRelocator = PersistentStoreRelocator(sharedContainerURL: containerUrl, newStoreURL: storeURL)
+        let storeRelocator = MainPersistentStoreRelocator(sharedContainerURL: containerUrl, newStoreURL: storeURL)
         try! storeRelocator.moveStoreIfNecessary(startedMigrationCallback: notifyMigrationStarted)
         self.addPersistentStore(at: storeURL, model: model, startedMigrationCallback: notifyMigrationStarted)
     }

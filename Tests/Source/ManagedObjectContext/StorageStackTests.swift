@@ -174,7 +174,7 @@ class StorageStackTests: XCTestCase {
     
     func testThatItPerformsMigrationWhenStoreIsInOldLocation() {
         
-        let oldLocations = PersistentStoreRelocator.possiblePreviousStoreLocations(sharedContainerURL: self.baseURL)
+        let oldLocations = MainPersistentStoreRelocator.possiblePreviousStoreLocations(sharedContainerURL: self.baseURL)
         let userID = UUID()
         let testValue = "12345678"
         let testKey = "aassddffgg"

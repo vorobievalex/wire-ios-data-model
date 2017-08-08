@@ -55,7 +55,29 @@ extension URL {
     }
 }
 
+/// Used for relocating main persistent store from legacy locations
+@objc public class MainPersistentStoreRelocator: PersistentStoreRelocator {
+    
+    static func possiblePreviousStoreLocations(sharedContainerURL: URL) -> [URL] {
+        var locations = [.cachesDirectory, .applicationSupportDirectory].flatMap{
+            FileManager.default.urls(for: $0, in: .userDomainMask).first!
+        }
+        locations.append(sharedContainerURL)
+        return locations.map{ $0.appendingStorePath() }
+    }
 
+    static func oldLocationForStore(sharedContainerURL: URL, newLocation: URL) -> URL? {
+        let previousStoreLocations = self.possiblePreviousStoreLocations(sharedContainerURL: sharedContainerURL)
+        return previousStoreLocations.first(where: { $0 != newLocation && storeExists(at: $0)})
+    }
+    
+    convenience public init(sharedContainerURL: URL, newStoreURL: URL) {
+        let previousStoreURL = type(of:self).oldLocationForStore(sharedContainerURL: sharedContainerURL, newLocation: newStoreURL)
+        self.init(newStoreURL: newStoreURL, previousStoreURL: previousStoreURL)
+    }
+}
+
+// Relocates persistent store and related files to a new location
 @objc public class PersistentStoreRelocator : NSObject {
     
     private let zmLog = ZMSLog(tag: "PersistentStoreRelocator")
@@ -66,26 +88,12 @@ extension URL {
     /// Extension of store files
     static let storeFileExtensions = ["", "-wal", "-shm"]
 
-    public init(sharedContainerURL: URL, newStoreURL: URL) {
+    public init(newStoreURL: URL, previousStoreURL: URL?) {
         self.storeLocation = newStoreURL
-        self.previousStoreLocation = type(of:self).oldLocationForStore(sharedContainerURL: sharedContainerURL,
-                                                                       newLocation: newStoreURL)
+        self.previousStoreLocation = previousStoreURL
     }
     
-    static func possiblePreviousStoreLocations(sharedContainerURL: URL) -> [URL] {
-        var locations = [.cachesDirectory, .applicationSupportDirectory].flatMap{
-            FileManager.default.urls(for: $0, in: .userDomainMask).first!
-        }
-        locations.append(sharedContainerURL)
-        return locations.map{$0.appendingStorePath()}
-    }
-    
-    static func oldLocationForStore(sharedContainerURL: URL, newLocation: URL) -> URL? {
-        let previousStoreLocations = self.possiblePreviousStoreLocations(sharedContainerURL: sharedContainerURL)
-        return previousStoreLocations.first(where: { $0 != newLocation && storeExists(at: $0)})
-    }
-    
-    func moveStoreIfNecessary(startedMigrationCallback: @escaping ()->()) throws {
+    public func moveStoreIfNecessary(startedMigrationCallback: @escaping ()->()) throws {
         if let previousStoreLocation = previousStoreLocation {
             startedMigrationCallback()
             try moveStore(from: previousStoreLocation, to: storeLocation)
