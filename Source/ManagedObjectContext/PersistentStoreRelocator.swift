@@ -126,13 +126,14 @@ extension URL {
         let fromStoreDirectory = from.deletingLastPathComponent()
         
         var isDirectory : ObjCBool = false
-        if !FileManager.default.fileExists(atPath: fromStoreDirectory.path, isDirectory: &isDirectory) && !isDirectory.boolValue {
+        guard FileManager.default.fileExists(atPath: fromStoreDirectory.path, isDirectory: &isDirectory) && !isDirectory.boolValue else {
             return
         }
         
         let fromStoreName = from.deletingPathExtension().lastPathComponent
         let fromSupportFile = ".\(fromStoreName)_SUPPORT"
         let source = fromStoreDirectory.appendingPathComponent(fromSupportFile)
+        guard FileManager.default.fileExists(atPath: source.path) else { return }
         
         let destinationStoreName = from.deletingPathExtension().lastPathComponent
         let destinationSupportFile = ".\(destinationStoreName)_SUPPORT"
