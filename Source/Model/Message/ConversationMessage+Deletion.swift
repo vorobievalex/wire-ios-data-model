@@ -81,7 +81,7 @@ extension ZMMessage {
     }
     
     func edit(_ newText: String, fetchLinkPreview: Bool) -> ZMMessage? {
-        guard isEditableMessage else { return nil }
+        guard isEditable else { return nil }
         guard !isZombieObject, let sender = sender , sender.isSelfUser else { return nil }
         guard let conversation = conversation else { return nil }
         
@@ -101,22 +101,4 @@ extension ZMMessage {
         newMessage.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
         return newMessage
     }
-    
-    var isEditableMessage : Bool {
-        return false
-    }
 }
-
-extension ZMClientMessage {
-    override var isEditableMessage : Bool {
-        if let genericMsg = genericMessage {
-            return (self.sender?.isSelfUser ?? false) &&
-                   (genericMsg.hasEdited() ||
-                       (genericMsg.hasText() && !isEphemeral && (deliveryState == .sent || deliveryState == .delivered)))
-        }
-        return false
-    }
-}
-
-
-

@@ -874,7 +874,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     __block ZMMessage *result;
     [self.messages enumerateObjectsWithOptions:NSEnumerationReverse
                                     usingBlock:^(ZMMessage *message, NSUInteger ZM_UNUSED idx, BOOL *stop) {
-                                            if ([message isEditableMessage]) {
+                                            if ([message isEditable]) {
                                                 result = message;
                                                 *stop = YES;
                                             }
